@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}食譜收藏夾系統{% endblock %}</title>
+    <!-- TODO: 加入 CSS 連結 -->
+</head>
+<body>
+    <header>
+        <nav>
+            <!-- TODO: Navbar 實作 (包含首頁、搜尋、登入/註冊或個人清單等連結) -->
+        </nav>
+    </header>
+
+    <main>
+        <!-- Flash messages 預留區置 -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2026 食譜收藏夾系統</p>
+    </footer>
+
+    <!-- TODO: 加入 JS 腳本 -->
+</body>
+</html>
