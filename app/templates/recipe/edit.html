@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}編輯食譜 - 食譜收藏夾系統{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mx-auto" style="max-width: 800px;">
+    <div class="card-body">
+        <h3 class="card-title mb-4">編輯食譜</h3>
+        <form method="POST" action="{{ url_for('recipe.edit', id=recipe.id) }}">
+            <div class="mb-3">
+                <label for="title" class="form-label">食譜名稱 *</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ recipe.title }}" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">食譜簡介</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ recipe.description }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="default_portions" class="form-label">預設份量 (人份) *</label>
+                <input type="number" class="form-control" id="default_portions" name="default_portions" value="{{ recipe.default_portions }}" min="1" required style="max-width: 150px;">
+            </div>
+            
+            <div class="alert alert-info py-2">
+                <small>註：要在這版 MVP 修改食材與步驟，請至後端更新。此處僅開放修改基礎資訊。</small>
+            </div>
+
+            <div class="text-end mt-4">
+                <a href="{{ url_for('recipe.detail', id=recipe.id) }}" class="btn btn-secondary">取消</a>
+                <button type="submit" class="btn btn-primary">儲存變更</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

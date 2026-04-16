@@ -16,24 +16,54 @@ class User(db.Model):
 
     @classmethod
     def create(cls, data):
-        new_user = cls(**data)
-        db.session.add(new_user)
-        db.session.commit()
-        return new_user
+        """新增一筆 User 記錄"""
+        try:
+            new_user = cls(**data)
+            db.session.add(new_user)
+            db.session.commit()
+            return new_user
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error creating User: {e}")
+            raise
 
     @classmethod
     def get_by_id(cls, user_id):
-        return cls.query.get(user_id)
+        """根據 ID 取得單筆記錄"""
+        try:
+            return cls.query.get(user_id)
+        except Exception as e:
+            print(f"Error getting User by id: {e}")
+            return None
 
     @classmethod
     def get_all(cls):
-        return cls.query.all()
+        """取得所有記錄"""
+        try:
+            return cls.query.all()
+        except Exception as e:
+            print(f"Error getting all Users: {e}")
+            return []
 
     def update(self, data):
-        for key, value in data.items():
-            setattr(self, key, value)
-        db.session.commit()
+        """更新目前的記錄"""
+        try:
+            for key, value in data.items():
+                setattr(self, key, value)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating User: {e}")
+            return False
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        """刪除目前的記錄"""
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error deleting User: {e}")
+            return False

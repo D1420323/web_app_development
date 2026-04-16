@@ -19,24 +19,54 @@ class Recipe(db.Model):
 
     @classmethod
     def create(cls, data):
-        new_recipe = cls(**data)
-        db.session.add(new_recipe)
-        db.session.commit()
-        return new_recipe
+        """新增一筆 Recipe 記錄"""
+        try:
+            new_recipe = cls(**data)
+            db.session.add(new_recipe)
+            db.session.commit()
+            return new_recipe
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error creating Recipe: {e}")
+            raise
 
     @classmethod
     def get_by_id(cls, recipe_id):
-        return cls.query.get(recipe_id)
+        """根據 ID 取得單筆記錄"""
+        try:
+            return cls.query.get(recipe_id)
+        except Exception as e:
+            print(f"Error getting Recipe by id: {e}")
+            return None
 
     @classmethod
     def get_all(cls):
-        return cls.query.all()
+        """取得所有記錄"""
+        try:
+            return cls.query.all()
+        except Exception as e:
+            print(f"Error getting all Recipes: {e}")
+            return []
 
     def update(self, data):
-        for key, value in data.items():
-            setattr(self, key, value)
-        db.session.commit()
+        """更新目前的記錄"""
+        try:
+            for key, value in data.items():
+                setattr(self, key, value)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error updating Recipe: {e}")
+            return False
 
     def delete(self):
-        db.session.delete(self)
-        db.session.commit()
+        """刪除目前的記錄"""
+        try:
+            db.session.delete(self)
+            db.session.commit()
+            return True
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error deleting Recipe: {e}")
+            return False

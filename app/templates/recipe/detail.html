@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}{{ recipe.title }} - 食譜收藏夾系統{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+            <h2>{{ recipe.title }}</h2>
+            {% if session.get('user_id') == recipe.user_id %}
+            <div class="btn-group">
+                <a href="{{ url_for('recipe.edit', id=recipe.id) }}" class="btn btn-outline-secondary">編輯</a>
+                <form method="POST" action="{{ url_for('recipe.delete', id=recipe.id) }}" style="display:inline;" onsubmit="return confirm('確定要刪除這篇食譜嗎？');">
+                    <button type="submit" class="btn btn-outline-danger">刪除</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        
+        <p class="lead">{{ recipe.description|default('無簡介', true) }}</p>
+        
+        <div class="mt-4 row">
+            <div class="col-md-5 mb-4">
+                <div class="p-3 bg-light rounded shadow-sm border">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="mb-0">食材清單</h4>
+                        <div class="input-group input-group-sm" style="width: auto;">
+                            <span class="input-group-text">份量</span>
+                            <input type="number" id="portionInput" class="form-control text-center" value="{{ recipe.default_portions }}" min="1" style="max-width:60px;" onchange="updatePortions()">
+                            <span class="input-group-text">人份</span>
+                        </div>
+                    </div>
+                    
+                    <ul class="list-group list-group-flush bg-transparent">
+                        {% for item in recipe.ingredients %}
+                        <li class="list-group-item bg-transparent px-0 border-bottom d-flex justify-content-between">
+                            <span>{{ item.name }}</span>
+                            <span class="fw-bold">
+                                <span class="ingredient-qty" data-base-qty="{{ item.quantity / recipe.default_portions }}">{{ item.quantity }}</span> {{ item.unit }}
+                            </span>
+                        </li>
+                        {% else %}
+                        <p class="text-muted">（未提供食材清單）</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <h4>製作步驟</h4>
+                {% if recipe.steps %}
+                <ol class="ps-3 mt-3 step-list" style="line-height:2">
+                    {% for step in recipe.steps|sort(attribute='step_number') %}
+                    <li class="mb-3">
+                        <h6 class="fw-bold text-primary">步驟 {{ step.step_number }}</h6>
+                        <p>{{ step.instruction }}</p>
+                    </li>
+                    {% endfor %}
+                </ol>
+                {% else %}
+                <p class="text-muted">（未提供製作步驟）</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function updatePortions() {
+    const portions = parseInt(document.getElementById('portionInput').value);
+    if (!portions || portions < 1) return;
+    
+    document.querySelectorAll('.ingredient-qty').forEach(el => {
+        const baseQty = parseFloat(el.getAttribute('data-base-qty'));
+        let newQty = baseQty * portions;
+        // 如果是整數就不要顯示小數點
+        if (newQty % 1 === 0) {
+            el.innerText = newQty;
+        } else {
+            el.innerText = newQty.toFixed(1).replace(/\.0$/, '');
+        }
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}新增食譜 - 食譜收藏夾系統{% endblock %}
+
+{% block content %}
+<div class="card shadow-sm mx-auto" style="max-width: 800px;">
+    <div class="card-body">
+        <h3 class="card-title mb-4">新增食譜</h3>
+        <form method="POST" action="{{ url_for('recipe.new') }}">
+            <div class="mb-3">
+                <label for="title" class="form-label">食譜名稱 *</label>
+                <input type="text" class="form-control" id="title" name="title" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">食譜簡介</label>
+                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="default_portions" class="form-label">預設份量 (人份) *</label>
+                <input type="number" class="form-control" id="default_portions" name="default_portions" value="1" min="1" required style="max-width: 150px;">
+            </div>
+
+            <hr>
+            <h5>食材清單</h5>
+            <div id="ingredient_list_container">
+                <div class="row g-2 mb-2 ingredient-row">
+                    <div class="col-md-5">
+                        <input type="text" class="form-control" name="ing_name[]" placeholder="食材名稱 (例: 雞蛋)">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="number" step="0.1" class="form-control" name="ing_quantity[]" placeholder="數量 (例: 2)">
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" class="form-control" name="ing_unit[]" placeholder="單位 (例: 顆)">
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-3" onclick="addIngredientRow()">+ 新增加一項食材</button>
+
+            <hr>
+            <h5>製作步驟</h5>
+            <div id="step_list_container">
+                <div class="mb-2 step-row">
+                    <textarea class="form-control" name="step_instruction[]" rows="2" placeholder="說明製作步驟..."></textarea>
+                </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-secondary mb-4" onclick="addStepRow()">+ 新增加一步驟</button>
+
+            <div class="text-end">
+                <a href="{{ url_for('recipe.dashboard') }}" class="btn btn-secondary">取消</a>
+                <button type="submit" class="btn btn-primary">儲存食譜</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function addIngredientRow() {
+    const row = document.createElement('div');
+    row.className = 'row g-2 mb-2 ingredient-row';
+    row.innerHTML = `
+        <div class="col-md-5"><input type="text" class="form-control" name="ing_name[]" placeholder="食材名稱"></div>
+        <div class="col-md-3"><input type="number" step="0.1" class="form-control" name="ing_quantity[]" placeholder="數量"></div>
+        <div class="col-md-3"><input type="text" class="form-control" name="ing_unit[]" placeholder="單位"></div>
+    `;
+    document.getElementById('ingredient_list_container').appendChild(row);
+}
+function addStepRow() {
+    const row = document.createElement('div');
+    row.className = 'mb-2 step-row';
+    row.innerHTML = '<textarea class="form-control" name="step_instruction[]" rows="2" placeholder="說明製作步驟..."></textarea>';
+    document.getElementById('step_list_container').appendChild(row);
+}
+</script>
+{% endblock %}
